@@ -1,3 +1,6 @@
+import mongoose from 'mongoose'
+import dbConfig from './dbs/config'
+
 const Koa = require('koa')
 const app = new Koa()
 const views = require('koa-views')
@@ -6,11 +9,21 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 
+
+
 const index = require('./routes/index')
 const users = require('./routes/users')
 
 // error handler
 onerror(app)
+
+mongoose.connect(dbConfig.dbs, { useNewUrlParser: true });
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log('链接成功')
+})
 
 // middlewares
 app.use(bodyparser({
